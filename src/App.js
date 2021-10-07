@@ -1,25 +1,46 @@
-import logo from './logo.svg';
 import './App.css';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import {Link, withRouter} from 'react-router-dom';
+import React from "react";
+import {compose} from "redux";
+import {connect} from "react-redux";
+
+import {setCurrentUser} from "./redux/user/user.actions";
+import setLoggedIn from "./redux/auth/auth.actions";
+import RootRoute from "./RootRoute";
+
+
+class App extends React.Component {
+    render() {
+        const {setUserData, setLoggedIn, history} = this.props;
+
+        return (
+            <div>
+                <div className="menubar">
+                    <Link className="menu-item" to='/'>Home Page</Link>
+                    <Link className="menu-item" to='/configuration'>Configuration Page</Link>
+                    <Link className="menu-item" to='/features'>Features Page</Link>
+                    <button className="menu-item" onClick={() => {
+                        history.push('/');
+                        setLoggedIn(false);
+                        setUserData(null);
+                    }}>Log Out
+                    </button>
+                </div>
+
+                {/* Root Router */}
+                <RootRoute></RootRoute>
+            </div>
+        );
+    }
 }
 
-export default App;
+const mapDispatchToProps = dispatch => ({
+    setUserData: (user) => dispatch(setCurrentUser(user)),
+    setLoggedIn: (isLoggedIn) => dispatch(setLoggedIn(isLoggedIn)),
+});
+
+export default compose(
+    connect(null, mapDispatchToProps),
+    withRouter,
+)(App);
